@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Management System</title>
+
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+      rel="stylesheet" />
+
+    <!-- styles -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Library Management System</h1>
+    <div class="app">
+      <!-- add new book -->
+      <section id="add-book">
+        <h2>Add New Book</h2>
+        <form id="new-book-form">
+          <div class="form-group">
+            <label for="book-title">Book Title</label>
+            <input
+              type="text"
+              id="book-title"
+              placeholder="Enter book title"
+              required />
+          </div>
+
+          <div class="form-group">
+            <label for="book-author">Author</label>
+            <input
+              type="text"
+              id="book-author"
+              placeholder="Enter author name"
+              required />
+          </div>
+
+          <div class="form-group">
+            <label for="book-category">Category</label>
+            <select id="book-category" required>
+              <option value="" selected disabled>Select a category</option>
+              <option value="fantasy">Fantasy</option>
+              <option value="romance">Romance</option>
+              <option value="science-fiction">Science Fiction</option>
+              <option value="thriller">Thriller/Mystery/Crime</option>
+              <option value="self-help">Self-Help</option>
+              <option value="children">Children's Literature</option>
+              <option value="history">History</option>
+              <option value="poetry">Poetry</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn">Add Book</button>
+        </form>
+      </section>
+
+      <!-- search for a book or use category filter -->
+      <section id="searchFilter">
+        <div class="search-filter">
+          <!-- Search box by Name (title) or Author -->
+          <div class="search-box">
+            🔍
+            <input
+              id="search-text"
+              type="text"
+              placeholder="search for a book by name or author" />
+          </div>
+          <!-- Filter by Category -->
+          <div class="filter">
+            <!-- <label for="bookCategory">Choose Books Category</label> -->
+            <select name="book-category" id="category-filter">
+              <option value="" selected disabled>Select a category</option>
+              <option value="fantasy">Fantasy</option>
+              <option value="romance">Romance</option>
+              <option value="science-fiction">Science Fiction</option>
+              <option value="thriller">Thriller/Mystery/Crime</option>
+              <option value="self-help">Self-Help</option>
+              <option value="children">Children's Literature</option>
+              <option value="history">History</option>
+              <option value="poetry">Poetry</option>
+            </select>
+          </div>
+        </div>
+      </section>
+      <!-- Books List -->
+      <section id="booksList">
+        <div class="container">
+          <div class="books-list" id="books-list">
+            <!-- books will be added here once you fill the form above -->
+            <!-- <div class="book-card">
+              <button id="delete-book">🗑️</button>
+              <div class="book-cover">BOOK</div>
+              <div class="book-info">
+                <div class="book-title">The Great Novel</div>
+                <div class="book-author">By John Smith</div>
+                <div class="book-category">Fiction</div>
+                <div class="availability">
+                  <span class="status available">Available</span>
+                  <button class="toggle-btn" onclick="toggleAvailability()">
+                    Borrow
+                  </button>
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      // Book class
+      class Book {
+        #id;
+        #title;
+        #author;
+        #category;
+        #isAvailable;
+
+        constructor(title, author, category) {
+          this.#id = Date.now();
+          this.#title = title;
+          this.#author = author;
+          this.#category = category;
+          this.#isAvailable = true;
+        }
+
+        // read or write availability
+        setAvailability(availability) {
+          this.#isAvailable = availability;
+        }
+        getAvailability() {
+          return this.#isAvailable;
+        }
+
+        // read book name
+        getTitle() {
+          return this.#title;
+        }
+
+        // read book author
+        getAuthor() {
+          return this.#author;
+        }
+
+        // read book category
+        getCategory() {
+          return this.#category;
+        }
+
+        // read book id
+        getId() {
+          return this.#id;
+        }
+
+        // toggle availability
+        toggleAvailability() {
+          this.#isAvailable = !this.#isAvailable;
+          return this.#isAvailable;
+        }
+
+        displayInfo() {
+          console.log(
+            `title: ${this.title} - author: ${this.author} - category: ${
+              this.category
+            } | ${this.#isAvailable ? "available" : "not available"}}`
+          );
+        }
+      }
+
+      //   Library class
+      class Library {
+        #books = [];
+
+        // read books
+        getBooks() {
+          return this.#books;
+        }
+
+        // add book function
+        addBook(book) {
+          this.#books.push(book);
+          this.updateDisplay();
+        }
+
+        // remove book function
+        removeBook(index) {
+          this.#books.splice(index, 1);
+          this.updateDisplay();
+        }
+
+        // toggle availability function
+        toggleAvailability(id) {
+          console.log(id);
+          console.log(this.getBooks()[0].id);
+
+          console.log(this.getBooks().find((book) => book.getId() === id));
+
+          const book = this.getBooks().find((book) => book.getId() === id);
+          console.log(`yes ${book}`);
+
+          if (book) {
+            book.toggleAvailability();
+            this.updateDisplay();
+          }
+        }
+
+        // search books function
+        searchBooks(input) {
+          console.log(input);
+
+          // search if input is within books titles
+          // search if input is within books authors
+          return this.#books.filter((book) => {
+            console.log(book, "CHECKED");
+
+            return (
+              book.getTitle().toLowerCase().includes(input) ||
+              book.getAuthor().toLowerCase().includes(input)
+            );
+          });
+        }
+
+        // filter by category function
+        filterByCategory(category) {
+          // show only books with selected category
+          return this.#books.filter((book) => {
+            return book.category === category;
+          });
+        }
+
+        // update Library display depending on filter, search, and books list
+        updateDisplay() {
+          const searchText = document
+            .getElementById("search-text")
+            .value.toLowerCase();
+          const bookCategory = document.getElementById("book-category").value;
+
+          const booksList = document.getElementById("books-list");
+          booksList.innerHTML = ``;
+
+          if (this.#books.length === 0) {
+            console.log("no books to show yet");
+
+            booksList.innerHTML = `
+            <div class="no-results">
+              <p>No books found to show.</p>
+              </div>
+              `;
+            return;
+          }
+
+          var filteredBooks = this.#books;
+
+          console.log("there are books found to show");
+          console.log(filteredBooks);
+
+          if (searchText) {
+            filteredBooks = this.searchBooks(searchText);
+          }
+
+          if (bookCategory) {
+            filteredBooks = this.filterByCategory(bookCategory);
+          }
+
+          this.#books.forEach((book) => {
+            const bookCard = document.createElement("div");
+
+            bookCard.className = "book-card";
+            bookCard.innerHTML = `
+                    <button class="delete-book-icon">🗑️</button>
+                    <div class="book-cover">BOOK</div>
+                    <div class="book-info">
+                      <div class="book-title">${book.getTitle()}</div>
+                      <div class="book-author">${book.getAuthor()}</div>
+                      <div class="book-category">${book.getCategory()}</div>
+                      <div class="availability">
+                        <span class="status ${
+                          book.getAvailability() ? "available" : "unavailable"
+                        }">${
+              book.getAvailability() ? "available" : "unavailable"
+            }</span>
+                        <button class="toggle-btn" id="${book.getId()}">
+                        Borrow
+                        </button>
+                      </div>
+                    </div>
+            `;
+            booksList.appendChild(bookCard);
+          });
+        }
+      }
+
+      //   ReferenceBook class
+      class ReferenceBook extends Book {
+        #locationCode;
+
+        constructor(title, author, category, locationCode) {
+          super(title, author, category);
+          this.#locationCode = locationCode;
+        }
+
+        displayInfo() {
+          console.log(
+            `title: ${this.title} - author: ${this.author} - category: ${
+              this.category
+            } | ${
+              this.getAvailability() ? "available" : "not available"
+            } | ${locationCode}`
+          );
+        }
+      }
+
+      //   create Library object
+      const booksLibrary = new Library();
+
+      // Load data
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("Hello Mimo");
+        booksLibrary.updateDisplay();
+
+        // add new book
+        document
+          .getElementById("new-book-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById("book-title").value;
+            const author = document.getElementById("book-author").value;
+            const category = document.getElementById("book-category").value;
+
+            //   check whether field are empty or not
+            if (title && author && category) {
+              // create new book object
+              const newBook = new Book(title, author, category);
+              console.log(newBook);
+              // add the new book to the books Library
+              booksLibrary.addBook(newBook);
+              console.log(booksLibrary);
+              //   reset form
+              document.getElementById("book-title").value = "";
+              document.getElementById("book-author").value = "";
+              document.getElementById("book-category").value = "";
+            } else {
+              alert("you can't leave empty fields! please fill all of them.");
+            }
+          });
+
+        // check filter change or search change
+        document
+          .getElementById("search-text")
+          .addEventListener("change", () => {
+            booksLibrary.updateDisplay();
+          });
+        document
+          .getElementById("category-filter")
+          .addEventListener("change", () => {
+            booksLibrary.updateDisplay();
+          });
+
+        // delete book when click on trash emoji
+        document.addEventListener("click", (e) => {
+          if (e.target.classList.contains("delete-book-icon")) {
+            const index = e.target.getAttribute("data-index");
+            booksLibrary.removeBook(index);
+          }
+        });
+
+        // toggle availability
+        document.getElementById("books-list").addEventListener("click", (e) => {
+          if (e.target.classList.contains("toggle-btn")) {
+            booksLibrary.toggleAvailability(e.target.id);
+            booksLibrary.updateDisplay();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
